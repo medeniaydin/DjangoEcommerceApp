@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Özel stiller */
+    .cart {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+        padding: 10px 0;
+    }
+
+    .cart-item img {
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+    .cart-item-details {
+        flex: 1;
+        padding-left: 20px;
+    }
+
+    .cart-total {
+        font-weight: bold;
+        font-size: 1.25rem;
+        margin-top: 20px;
+    }
+</style>
+{% for item in product %}
+<div class="container">
+    <h1>Sepetiniz</h1>
+    <div class="cart">
+        
+        <div class="cart-item">
+            <img src="{{ item.image.url }}" alt="">
+            <div class="cart-item-details">
+                <h4>{{ item.name }}</h4>
+                <p>Fiyat: {{ item.price }}$</p>
+                <p>Miktar: {{ item.quantity }}</p>
+                <p>Toplam Fiyat: $</p>
+            </div>
+            <button class="btn btn-danger">Kaldır</button>
+        </div>
+      
+        <div class="cart-total">
+            Toplam Tutar: $
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

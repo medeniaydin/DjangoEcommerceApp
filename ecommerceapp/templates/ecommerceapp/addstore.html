@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h1>Ürün Ekle</h1>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="product_name" class="form-label">Ürün Adı:</label>
+                            <input type="text" id="product_name" name="header_input"  class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="product_price" class="form-label">Ürün Fiyatı:</label>
+                            <div class="input-group">
+                                <input type="number" id="product_price" name="price" step="0.01" class="form-control">
+                                <span class="input-group-text">$</span>
+                            </div>
+                        </div>
+                        <div class="col-12 form-floating p-1">
+                            <input type="file" name="image" class="form-control mt-1" accept="image/*" />
+                            <label>Ürün Fotoğrafı Ekle</label>
+                            </div>
+
+                        <div class="mb-3">
+                            <input type="submit" value="Ürünü Ekle" class="btn btn-primary">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock  %}

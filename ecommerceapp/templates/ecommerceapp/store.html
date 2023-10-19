@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Özel stiller */
+    .product-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin: 10px;
+        width: 250px; /* Kartın genişliği */
+    }
+
+    .product-card img {
+        max-width: 100%;
+        height: 200px; /* Kartın yüksekliği */
+        object-fit: cover; /* Resmi kartın boyutlarına sığdır */
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .product-card .card-body {
+        padding: 1.25rem;
+        text-align: center; /* İçeriği ortala */
+    }
+
+    .product-card .card-title {
+        font-size: 1rem; /* Başlık font boyutu */
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .product-card .btn-group {
+        display: flex;
+        justify-content: center; /* Butonları ortala */
+    }
+        
+    
+</style>
+<form >
+    
+<div class="container">
+    <div class="row">
+        {% for prd in product %}
+        
+    <form action="{% url 'ecommerceapp:add_to_cart' prd.id %}" method="POST">
+        {% csrf_token %}
+        <div class="col-md-4">
+            <div class="product-card">
+                <img src="{{ prd.image.url }}" alt="{{ prd.name }}">
+                <div class="card-body"> 
+                    <h5 class="card-title">{{ prd.name }}</h5>
+                    <p class="card-text">{{ prd.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group" >
+                            <button type="submit"  class="btn btn-sm btn-primary" >Add to Cart</button>
+                            <button type="button" class="btn btn-sm btn-secondary">View</button>
+                        </div>
+                        <span class="text-success">{{ prd.price }}$</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form> 
+        {% endfor %}
+    </div>
+</div>
+</form>
+
+{% endblock %}
