@@ -11,3 +11,8 @@ class ProductForm(ModelForm):
     class Meta:
         model = models.Product
         fields = ["name", "price","image"]    
+
+
+class AddToForms(forms.Form):
+    product = forms.IntegerField(widget=forms.HiddenInput())
+    quantity = forms.IntegerField(initial=1, min_value=1, widget=forms.NumberInput(attrs={'class': 'form-control'}))

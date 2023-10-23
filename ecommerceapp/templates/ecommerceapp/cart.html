@@ -32,27 +32,24 @@
         font-size: 1.25rem;
         margin-top: 20px;
     }
+ 
 </style>
-{% for item in product %}
-<div class="container">
-    <h1>Sepetiniz</h1>
-    <div class="cart">
-        
-        <div class="cart-item">
-            <img src="{{ item.image.url }}" alt="">
-            <div class="cart-item-details">
-                <h4>{{ item.name }}</h4>
-                <p>Fiyat: {{ item.price }}$</p>
-                <p>Miktar: {{ item.quantity }}</p>
-                <p>Toplam Fiyat: $</p>
-            </div>
-            <button class="btn btn-danger">Kaldır</button>
-        </div>
-      
-        <div class="cart-total">
-            Toplam Tutar: $
-        </div>
+<div class=" container card">
+    <h1> Sepetiniz</h1>
+    <hr class="my-2" style="margin-right: 100px;">   
+    <br>
+{% for item in cart_items %}
+<div class="cart-item">
+    <img src="{{ item.product.image.url }}" alt="">
+    <div class="cart-item-details">
+        <h4>{{ item.product.name }}</h4>
+        <p>Fiyat: {{ item.product.price }}$</p>
+        <p>Miktar: {{ item.quantity }}</p>
+        <p>Toplam Fiyat: {{ item.product.price|floatformat:"2" }}$</p>
     </div>
+    
+    <button class="btn btn-danger">Kaldır</button>
 </div>
-{% endfor %}
+{% endfor %}    
+</div>
 {% endblock %}

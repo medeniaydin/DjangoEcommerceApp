@@ -25,4 +25,5 @@ class Product(models.Model):
 class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)  # 'Product' modelini tanımlamanız gerekebilir.
-    quantity = models.PositiveIntegerField(default=0,null=True)
+    quantity = models.PositiveIntegerField(default=1,null=True)
+    
