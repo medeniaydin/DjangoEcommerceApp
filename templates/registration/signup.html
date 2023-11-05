@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+{% if user.is_authenticated %}    
+    <h2 style="padding: 10px;">Welcome {{ user.username }}</h2>
+  {% else %}    
+  
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card tweet-card shadow">
+                <div class="tweet-box">
+                    <h1 class="text-center">Sing Up</h1>
+                       {% if form.errors %}
+                      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>Warning!</strong> Passwords do not match or you did not use special characters (A,z,1,!).
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                      {% endif %}
+                    <hr class="my-4">
+                </div>
+                
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {{ field }}
+                        </div>
+                        {% endfor %}
+
+                        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Giriş Yap</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

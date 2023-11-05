@@ -134,3 +134,12 @@ MEDIA_ROOT = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
+
+
+PAYMENT_PROCESSOR = 'payments.dummy.DummyProvider'
+PAYMENT_DUMMY = True
+# Diğer ödeme ayarları burada yapılandırılabilir
+
+STRIPE_TEST_PUBLIC_KEY = 'pk_test_51O7H0TKKq2j9LDHIdfH0GhRbPArv759oiL397'
+STRIPE_TEST_SECRET_KEY = 'sk_test_51O7H0TKKq2j9LDHI7WLsoEeZUmbYKmteCMoX9UU7UKZAybkDAJueYDo3vmXkaJhQwsw4oOn9GEM10e3zgBqInxHG00ixhVULuo'
+

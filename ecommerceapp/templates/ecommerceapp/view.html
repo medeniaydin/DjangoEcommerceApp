@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+
+    /* Diğer özel stiller buraya eklenebilir */
+    .product-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .product-info img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-right: 20px;
+    }
+
+    .product-details {
+        width: 70%;
+        margin-top: 10px;
+    }
+
+    .product-details span.product-name {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .product-details span.product-owner {
+        font-size: 1rem;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .product-details p {
+        font-size: 1rem;
+    }
+
+    .product-price {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: green;
+        margin-top: 10px;
+    }
+
+    .btn-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    /* Butonun stili */
+    .btn-group button {
+        padding: 10px 20px; /* Buton genişliği ve yüksekliği */
+        border-radius: 5px; /* Kenar yuvarlaklığı */
+        margin-right: 15px; /* Butonlar arası boşluk */
+        transition: all 0.3s; /* Dönüşüm süresi */
+        font-weight: bold; /* Kalın font */
+    }
+
+    /* Butonun hafif inceltilmiş ve uzatılmış hali */
+    .btn-group button.btn-primary {
+        background-color: #337ab7; /* Arka plan rengi */
+        color: white; /* Yazı rengi */
+        border: 2px solid #337ab7; /* Kenarlık rengi ve kalınlığı */
+        padding: 0px 40px; /* Buton genişliği ve yüksekliği uzatılmış hali */
+    }
+
+    .btn-group button.btn-primary:hover {
+        background-color: #286090; /* Hover edildiğinde arka plan rengi */
+        border-color: #286090; /* Hover edildiğinde kenarlık rengi */
+    }
+    .product-details .product-description {
+    display: block; /* Blok olarak görüntüle */
+    margin-top: 10px; /* Üstte boşluk bırak */
+    white-space: pre-line; /* Boşlukları koru ve satır atlama işaretlerini kullan */
+}
+
+</style>
+
+
+    <div class="container">
+        <div class="row">
+            {% for product in product %}
+                <div class="col-md-6">
+                    <div class="product-info">
+                        
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="padding-top: 15px;">
+                        <div class="product-details">
+                            <span class="product-name">{{ product.name }}</span>
+                            <span class="product-owner"><strong>Satıcı:</strong> {{ product.username }}</span>
+                            <div class="product-description">{{ product.description }}</div>
+                            <p class="product-price">{{ product.price }}$</p>
+                            <div class="btn-group">
+                                <form method="POST" action="{% url 'ecommerceapp:add_to_cart' product.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                    {{ form.quantity.label_tag }}
+                                    {{ form.quantity }}
+                                    {% if user.is_authenticated %}
+                                        <button type="submit" class="btn btn-primary">Sepete Ekle</button>
+                                    {% else %}
+                                        <a href="{% url 'login' %}" class="btn btn-primary">Sepete Ekle</a>
+                                    {% endif %}
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

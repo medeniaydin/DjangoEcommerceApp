@@ -33,8 +33,19 @@
         display: flex;
         justify-content: center; /* Butonları ortala */
     }
-        
+
+    .user {
+        padding-right: 150px;
+    }
+
+    .product-card .card-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 </style>
+
 <div class="container">
     <div class="row">
         {% for prd in product %}
@@ -44,21 +55,35 @@
                 <input type="hidden" name="product_id" value="{{ prd.id }}">
                 {{ form.quantity.label_tag }}
                 {{ form.quantity }}
-                <div class="product-card">
-                    <img src="{{ prd.image.url }}" alt="{{ prd.name }}">
+                <div class="product-card shadow">
+                    <a href="{% url 'ecommerceapp:view_product' id=prd.id %}"><img src="{{ prd.image.url }}" alt="{{ prd.name }}"></a>
                     <div class="card-body"> 
+                       
+
                         <h5 class="card-title">{{ prd.name }}</h5>
-                        <p class="card-text">{{ prd.description }}</p>
+                        <h1 class="card-title user">{{ prd.username }}</h1>
+                        <p class="card-text">{{ prd.description|truncatechars:150 }}</p>
+
+                        
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group" >
+                                {% if user.is_authenticated %} 
                                 <button type="submit" class="btn btn-sm btn-primary" >Add to Cart</button>
-                                <button type="button" class="btn btn-sm btn-secondary">View</button>
-                            </div>
+                                {% else %} 
+                                <a href="{% url 'login' %}"><button type="button" class="btn btn-sm btn-primary" >Add to Cart</button></a>
+                                {% endif %}
+                                <a href="{% url 'ecommerceapp:view_product' id=prd.id %}"><button type="button" class="btn btn-sm btn-secondary" style="margin-left: 3px;" >View</button></a>
+                                
+                            </div>  
                             <span class="text-success">{{ prd.price }}$</span>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+                
+              
+              </div>
+            
+           
         </div>
         {% endfor %}
     </div>

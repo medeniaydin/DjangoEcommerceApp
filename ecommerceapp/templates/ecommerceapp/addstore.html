@@ -1,19 +1,25 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<div class="container">
+<style>
+    .boddy{
+        padding: 10px;
+    }
+</style>
+
+<div class="container" style="padding-top: 50px;">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h1>Ürün Ekle</h1>
+                    <h1>Ürün Ekle </h1>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="product_name" class="form-label">Ürün Adı:</label>
-                            <input type="text" id="product_name" name="header_input"  class="form-control" required>
+                            <input type="text" id="product_name" name="header_input" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
@@ -23,10 +29,16 @@
                                 <span class="input-group-text">$</span>
                             </div>
                         </div>
+
+                        <div class="mb-3">
+                            <label for="product_description" class="form-label">Ürün Açıklaması:</label>
+                            <textarea id="product_description" name="description" class="form-control" required></textarea>
+                        </div>
+
                         <div class="col-12 form-floating p-1">
-                            <input type="file" name="image" class="form-control mt-1" accept="image/*" />
+                            <input type="file" name="image" class="form-control mt-1" accept="image/*" required/>
                             <label>Ürün Fotoğrafı Ekle</label>
-                            </div>
+                        </div>
 
                         <div class="mb-3">
                             <input type="submit" value="Ürünü Ekle" class="btn btn-primary">
@@ -37,4 +49,5 @@
         </div>
     </div>
 </div>
+
 {% endblock  %}

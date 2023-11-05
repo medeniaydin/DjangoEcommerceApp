@@ -1,55 +1,64 @@
+
+
 {% extends "base.html" %}
-
+{% load custom_filters %}
 {% block content %}
-<style>
-    /* Özel stiller */
-    .cart {
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 20px;
-    }
+<div class="container">
+    <h1 class="mb-4">Sepetiniz</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Ürün</th>
+                <th scope="col">Fiyat</th>
+                <th scope="col">Miktar</th>
+                <th scope="col">Toplam Fiyat</th>
+                <th scope="col">İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>
+                    <a href="{% url 'ecommerceapp:view_product' id=item.id %}"><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="max-width: 100px;"></a>
+                    {{ item.product.name }}
+                </td>
+                <td style="color: green;">${{ item.product.price|floatformat:"2" }}</td>
+                <td>
+                    <form method="post" action="{% url 'ecommerceapp:update_quantity' item.product.id %}">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="number" name="quantity" value="{{ item.quantity }}" class="form-control" min="1">
+                            <button type="submit" class="btn btn-primary">Güncelle</button>
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    
 
-    .cart-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #ccc;
-        padding: 10px 0;
-    }
+                    <p class="text-success">${{ item.total_display }}</p>
 
-    .cart-item img {
-        max-width: 100px;
-        max-height: 100px;
-    }
+                </td>
+                <td>
+                    <form method="post" action="{% url 'ecommerceapp:deletecart' item.product.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Sil</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    .cart-item-details {
-        flex: 1;
-        padding-left: 20px;
-    }
-
-    .cart-total {
-        font-weight: bold;
-        font-size: 1.25rem;
-        margin-top: 20px;
-    }
- 
-</style>
-<div class=" container card">
-    <h1> Sepetiniz</h1>
-    <hr class="my-2" style="margin-right: 100px;">   
-    <br>
-{% for item in cart_items %}
-<div class="cart-item">
-    <img src="{{ item.product.image.url }}" alt="">
-    <div class="cart-item-details">
-        <h4>{{ item.product.name }}</h4>
-        <p>Fiyat: {{ item.product.price }}$</p>
-        <p>Miktar: {{ item.quantity }}</p>
-        <p>Toplam Fiyat: {{ item.product.price|floatformat:"2" }}$</p>
+    <div class="total-price">
+        <p style="color: green;"><strong style="color: black;">Toplam Tutar:</strong> ${{ cart_total }}</p>
     </div>
-    
-    <button class="btn btn-danger">Kaldır</button>
+
+    <form method="post" action="{% url 'ecommerceapp:checkout' %}">
+        {% csrf_token %}
+        <div class="checkout-button">
+            <button type="submit" class="btn btn-success">Satın Al</button>
+        </div>
+    </form>
 </div>
-{% endfor %}    
-</div>
+
 {% endblock %}
