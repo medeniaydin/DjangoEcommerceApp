@@ -105,8 +105,14 @@
                                     {% else %}
                                         <a href="{% url 'login' %}" class="btn btn-primary">Sepete Ekle</a>
                                     {% endif %}
+
+                                    
                                 </form>
-                                
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'ecommerceapp:user_profile' %}" class="btn btn-primary" style="margin-bottom: 17px;"><span class="material-symbols-outlined">
+                                    account_circle
+                                    </span></a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>  

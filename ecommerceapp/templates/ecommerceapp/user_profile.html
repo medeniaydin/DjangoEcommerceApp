@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 <style>
     /* Özel stiller */
@@ -67,13 +67,23 @@
     .btn-danger:hover {
         background-color: #c0392b;
     }
+    .tweet-card {
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
 </style>
 
 <div class="container">
-    <h1>Kullanıcı Profili</h1>
+    <div class="tweet-card container shadow " >
+    <h1  style="padding-left: 343px;">User Profile</h1>
 
     {% if user.is_authenticated %}
-        <h2>Eklediğiniz Ürünler:</h2>
+        <h2  style="padding-left: 317px;">Eklediğiniz Ürünler</h2>
+    </div>
         <div class="row">
             {% for prd in user_products %}
                 <div class="col-md-4">
@@ -92,7 +102,7 @@
                                         <button type="submit" class="btn btn-sm btn-primary" style="padding: 8px 15px; margin: 5px;">Edit</button>
                                     </form> 
                                 {% endif %}
-                                    {% if prd.username == user %}
+                                    {% if prd.username == user %}   
                                         <form method="post" action="{% url 'ecommerceapp:deleteproduct' id=prd.id %}">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-sm btn-danger" style="padding: 8px 15px; margin: 5px;">Delete</button>

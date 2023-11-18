@@ -7,14 +7,21 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://js.stripe.com/v3/"></script>
     <title>E-Commerce App</title>
 
     <style>
       body {
         min-height: 75rem;
-        padding-top: 3.5rem;
+        padding-top: 3.8rem;
       }
-      
+      body.dark-mode {
+        /* Karanlık tema stilleri */
+        background-color: #575757; /* Örnek olarak sayfa arka plan rengi */
+        color: #fff; /* Örnek olarak metin rengi */
+        /* Diğer karanlık tema stilleri */
+    }
 
 
       .nav-scroller {
@@ -123,6 +130,94 @@
 }
 
     </style>
+
+    <!-- profile css -->
+
+    <style>
+      /* Özel stiller */
+      .product-card {
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          margin: 10px;
+          width: 250px; /* Kartın genişliği */
+      }
+      .product-card.dark-mode {
+        background-color: #1a1919; /* Örnek olarak sayfa arka plan rengi */
+        color: #fff; /* Örnek olarak metin rengi */
+        /* Diğer karanlık tema stilleri */
+    }
+      
+
+      
+      .product-card img {
+          max-width: 100%;
+          height: 200px; /* Kartın yüksekliği */
+          object-fit: cover; /* Resmi kartın boyutlarına sığdır */
+          border-top-left-radius: 8px;
+          border-top-right-radius: 8px;
+      }
+  
+      .product-card .card-body {
+          padding: 1.25rem;
+          text-align: center; /* İçeriği ortala */
+      }
+  
+      .product-card .card-title {
+          font-size: 1rem; /* Başlık font boyutu */
+          font-weight: bold;
+          margin-bottom: 10px;
+      }
+  
+      .product-card .btn-group {
+          display: flex;
+          justify-content: center; /* Butonları ortala */
+      }
+  
+      .product-card .card-text {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+      }
+  
+      .user {
+          padding-right: 150px;
+      }
+      .btn {
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+      }
+  
+      .btn-secondary {
+          background-color: #f0f0f0;
+          color: #333;
+      }
+  
+      .btn-secondary:hover {
+          background-color: #ddd;
+      }
+  
+      .btn-danger {
+          background-color: #e74c3c;
+          color: white;
+      }
+  
+      .btn-danger:hover {
+          background-color: #c0392b;
+      }
+      .tweet-card {
+              border: 1px solid #e1e8ed;
+              border-radius: 10px;
+              padding: 15px;
+              margin-bottom: 20px;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              background-color: #fff;
+          }
+         
+  </style>
+  
+
 </head>
 <body>
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
@@ -135,33 +230,61 @@
         </symbol>
       </svg>
       
-      <nav class="navbar navbar-expand-lg navbar-dark fixed-top  bg-dark"  tabindex="-1" style="z-index: 1500;" data-bs-theme="dark" >
+      <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark" tabindex="-1" style="z-index: 1500;" data-bs-theme="dark">
         <div class="container">
-       
-          <div class="offcanvas offcanvas-end" tabindex="-1" style="z-index: 1500;" id="#offcanvas" aria-labelledby="#offcanvasLabel">
-
-            <div class="offcanvas-body">
-              
-              <ul class="navbar-nav flex-grow-1 justify-content-between">
-                
-                <li class="nav-item"><a class="nav-link" href="{% url 'ecommerceapp:store' %}">
-                    <span class="material-symbols-outlined">storefront</span>
-                </a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Product</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Enterprise</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Support</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'ecommerceapp:addstore' %}">Add Store</a></li>
-                <li class="nav-item"><a class="nav-link"  style="size: 100px;" href="{% url 'ecommerceapp:cart' %}" >
-                    <span class="material-symbols-outlined">shopping_cart_checkout</span>
-                </a></li>
+          <button onclick="toggleDarkMode()" style="size: 50px ; margin-left: 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-moon-fill" viewBox="0 0 16 16">
+            <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+          </svg> Dark</button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" style="z-index: 1500;" id="#offcanvas" aria-labelledby="#offcanvasLabel">
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav flex-grow-1 justify-content-between">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'ecommerceapp:store' %}">
+                                <span class="material-symbols-outlined">storefront</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><span class="material-symbols-outlined">
+                                category
+                            </span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><span class="material-symbols-outlined">
+                                support_agent
+                            </span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'ecommerceapp:addstore' %}"><span class="material-symbols-outlined">
+                                shadow_add
+                            </span></a>
+                        </li>
+                       
+                        
+                        <!-- <li class="nav-item">
+                          <a class="nav-link" href="{% url 'ecommerceapp:cart' %}">
+                              <span class="material-symbols-outlined">shopping_cart_checkout</span>
+                               {% if request.path == '/cart/' %} 
+                                  <span class="badge">{{ cart_items|length }}</span>
+                             {% endif %} 
+                          </a>
+                      </li> -->
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ecommerceapp:cart' %}">
+                            <span class="material-symbols-outlined">shopping_cart_checkout</span>
+                            <span class="badge" id="cart-item-count">{{ cart_items|length }}</span>
+                        </a>
+                    </li>
+                    
+                      
+                     
                 <!--{% if user.is_authenticated %}
                 <li class="nav-item" style="padding-left: 50px;"><a class="nav-link" href="{% url 'logout' %}?next=/login/">Logout</a></li>
 
                 {% else %}  
                 <li class="nav-item" style="padding-left: 50px;"><a class="nav-link" href="{% url 'login' %}">Log in</a></li>
                  {% endif %}-->
-                  <li>
-               <div class="container-fluid">
+                  <li >
+               <div class="container-fluid" >
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
@@ -170,15 +293,20 @@
                   <ul class="navbar-nav">
                     <li class="nav-item dropdown">
                       <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown
+                        <span class="material-symbols-outlined">
+                          dehaze
+                          </span>
                       </button>
                       <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" href="{% url 'ecommerceapp:user_profile' %}"><span class="material-symbols-outlined">
+                          person
+                          </span></a></li>
                         <li><a class="dropdown-item" href="{% url 'login' %}">Log in</a></li>
-                        <li><a class="dropdown-item" href="{% url 'ecommerceapp:user_profile' %}">Profile</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><a class="dropdown-item" href="{% url 'ecommerceapp:signup' %}">signup</a></li>
-                        <li><a class="dropdown-item" href="{% url 'logout' %}?next=/login/">Logout</a></li>
                         
+                        
+                        <li><a class="dropdown-item" href="{% url 'logout' %}?next=/login/"><span class="material-symbols-outlined">
+                          logout
+                          </span></a></li>
                       </ul>
                     </li>
                   </ul>
@@ -195,7 +323,15 @@
       {% block content %}
     
       {% endblock  %} 
+      <script>
+        function toggleDarkMode() {
+            const body = document.getElementsByTagName('body')[0];
+            body.classList.toggle('dark-mode');
+        }
+    </script>
+    
       
+
       
 </body>
 </html>

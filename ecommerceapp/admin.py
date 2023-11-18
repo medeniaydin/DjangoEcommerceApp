@@ -9,7 +9,7 @@ class ProductAdmin(admin.ModelAdmin):
     ('Cart Group', {"fields": [" user","product","quantity"]}),
     ('Order Group', {"fields": [" user","order_number","order_date","total_amount"]}),
     ('User Group', {"fields": ["user",["name","price","image","description"]]}),
-    ]
+    ] 
                                     
 
 admin.site.register(models.Product, ProductAdmin)

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-
+<!-- BURYA YOLLA SEPET VERİSİNİ -->
 {% block content %}
 <style>
     /* Özel stiller */
     .product-card {
-        border: 1px solid #ccc;
+        border: 1px solid #adacac;
         border-radius: 8px;
         margin: 10px;
         width: 250px; /* Kartın genişliği */
@@ -48,8 +48,9 @@
 
 <div class="container">
     <div class="row">
+        
         {% for prd in product %}
-        <div class="col-md-4">
+        <div class="col-md-4" style="padding-top: 2px;">
             <form method="POST" action="{% url 'ecommerceapp:add_to_cart' prd.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="product_id" value="{{ prd.id }}">

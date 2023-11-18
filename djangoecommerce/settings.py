@@ -12,11 +12,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+VENV_PATH = os.path.join(BASE_DIR, 'myenv', 'Lib', 'site-packages',)
+sys.path.append(VENV_PATH)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -140,6 +143,6 @@ PAYMENT_PROCESSOR = 'payments.dummy.DummyProvider'
 PAYMENT_DUMMY = True
 # Diğer ödeme ayarları burada yapılandırılabilir
 
-STRIPE_TEST_PUBLIC_KEY = 'pk_test_51O7H0TKKq2j9LDHIdfH0GhRbPArv759oiL397'
+STRIPE_TEST_PUBLIC_KEY = 'pk_test_51O7H0TKKq2j9LDHIdfH0GhRbPArv759oiL397zvt30mqVFFkWplB82s6p6LAeJcXWx2iGTlAarfgUkHmaJ0OU7Ic00583yPoIK'
 STRIPE_TEST_SECRET_KEY = 'sk_test_51O7H0TKKq2j9LDHI7WLsoEeZUmbYKmteCMoX9UU7UKZAybkDAJueYDo3vmXkaJhQwsw4oOn9GEM10e3zgBqInxHG00ixhVULuo'
 

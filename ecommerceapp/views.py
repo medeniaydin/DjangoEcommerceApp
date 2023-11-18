@@ -1,3 +1,5 @@
+import genericpath
+from typing import Generic
 from django.shortcuts import render, redirect,get_object_or_404
 from django.urls import reverse,reverse_lazy
 from . import models
@@ -14,6 +16,10 @@ from django.http import HttpResponse
 from django.views.generic import DetailView
 import random
 import string
+import os
+from django.conf import settings
+from django.http import Http404
+
 
 # Create your views here.
 
@@ -21,9 +27,16 @@ import string
 def store(request):
     all_custom = models.Customer.objects.all()  
     all_product = models.Product.objects.all()
-    info_dict = {"custom": all_custom,"product":all_product}
+    info_dict = {"custom": all_custom,"product":all_product }
+    if request.user.is_authenticated:
+        cart_items = CartItem.objects.filter(user=request.user)
+        info_cart = {"cart_items" :cart_items,"custom": all_custom,"product":all_product}
+        return render(request,'ecommerceapp/store.html',context=info_cart )
+
+    
     return render(request,'ecommerceapp/store.html',context=info_dict )
   
+
 @login_required(login_url="/login")
 def addstore(request):
     if request.POST:
@@ -32,15 +45,18 @@ def addstore(request):
         image = request.FILES["image"]
         description = request.POST["description"]
         models.Product.objects.create(username=request.user,name=header, price=price,image=image,description=description)
-        return redirect(reverse('ecommerceapp:store'))
-    else:   
-        return render(request,'ecommerceapp/addstore.html')
+        return redirect(reverse('ecommerceapp:store'))  
+    else:
+        cart_items = CartItem.objects.filter(user=request.user)
+        all_ifo = {'cart_items':cart_items}   
+        return render(request,'ecommerceapp/addstore.html',context=all_ifo)
 
 
 @login_required(login_url="/login")
 def cart(request):
     if request.user.is_authenticated:
         cart_items = CartItem.objects.filter(user=request.user)
+        user_products = models.Product.objects.filter(username=request.user)
         cart_total = calculate_cart_total(cart_items)  # Sepet toplamını hesaplayın
         total_prices = []  # Her bir ürünün toplam fiyatlarını saklamak için bir liste oluşturun
 
@@ -51,27 +67,21 @@ def cart(request):
 
         # Sonuçları context içinde kullanılabilir hale getirin
         context = {
-            'cart_items': cart_items,
+            'cart_items': cart_items,   
             'cart_total': cart_total,  # Sepet toplamını şablona gönderin
             'total_prices': total_prices,  # Her bir ürünün toplam fiyatlarını şablona gönderin
+            'user_products': user_products
         }
-
+        
         return render(request, 'ecommerceapp/cart.html', context)
-    
+
 
 def view(request, id):
     product_id = str(id)
     product = models.Product.objects.filter(pk=product_id)
-    prd_info = {'product': product}
+    cart_items = CartItem.objects.filter()
+    prd_info = {'product': product,'cart_items':cart_items}
     return render(request, 'ecommerceapp/view.html', context=prd_info)
-
-
-
-class ProductDetailView(DetailView):
-    model = models.Product
-    template_name = 'ecommerceapp/view.html'  # Şablon dosyası adı
-    context_object_name = 'product'  # Şablon dosyasında kullanılacak nesne adı
-
 
 
 def add_to_cart(request, product_id):
@@ -167,6 +177,7 @@ def update_cart_total(user):
         # Kullanıcıya ait bir sepet bulunamadı, burada gerekli işlemler yapılabilir
         pass
 
+
 @login_required
 def update_quantity(request, product_id):
     if request.method == 'POST':
@@ -221,24 +232,43 @@ def checkout(request):
 
     return HttpResponseBadRequest("Geçersiz istek")
 
+
 @login_required
-def deleteProduct(request,id):
+def deleteProduct(request, id):
     product_id = str(id)
-    product = models.Product.objects.get(pk=product_id) 
-    if request.user == product.username: 
-        models.Product.objects.filter(id=product_id).delete()
-        return redirect("ecommerceapp:user_profile") 
+    try:
+        product = models.Product.objects.get(pk=product_id)
+
+        if request.user == product.username: 
+            # Fotoğraf yolu alınıyor
+            image_path = product.image.path
+
+            # Fotoğraf siliniyor
+            if os.path.exists(image_path):
+                os.remove(image_path)
+
+            # Ürün veritabanından siliniyor
+            product.delete()
+
+            return redirect("ecommerceapp:user_profile")
+        else:
+            # Eğer ürün kullanıcının değilse
+            raise Http404("Bu ürünü silemezsiniz.")
+    except models.Product.DoesNotExist:
+        raise Http404("Bu ürün mevcut değil.")
     
+
 @login_required(login_url="/login")
 def user_profile(request):
     if request.user.is_authenticated:
         user_products = models.Product.objects.filter(username=request.user)  # Bu satır, kullanıcının eklediği ürünleri getirecek. Product modeline göre uyarlanmalı.
-        return render(request, 'ecommerceapp/user_profile.html', {'user_products': user_products})
+        cart_items = CartItem.objects.filter(user=request.user)
+        return render(request, 'ecommerceapp/user_profile.html', {'user_products': user_products,'cart_items':cart_items})
     else:
         # Burada isteğe bağlı olarak giriş yapmamış kullanıcılar için bir yönlendirme yapılabilir.
         return render(request, 'registration/login.html')
 
-from django.forms.models import model_to_dict
+
 
 @login_required(login_url="/login")
 def edit_product(request, id):
@@ -267,9 +297,46 @@ def edit_product(request, id):
             #return HttpResponse(f'Ürün {product.id} başarıyla güncellendi.')
 
         else:
-            return render(request, 'ecommerceapp/edit_product.html', {'form': form, 'product': product})
+            cart_items = CartItem.objects.filter(user=request.user)
+            return render(request, 'ecommerceapp/edit_product.html', {'form': form, 'product': product,'cart_items':cart_items})
+
+
 
 class SignUpView(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"   
+
+#Payment
+
+import stripe
+from django.conf import settings
+# This is your test secret API key.
+stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
+
+
+YOUR_DOMAIN = 'http://127.0.0.1:8000'
+class CrateCheckoutSessionView():
+    def post(self, *args,**kwargs):
+        host = self.request.get_host()
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                    'price_data': {
+                        'quantity': 1,
+                        'name': 'product.name',
+                        'price': 'product.price',
+                        #'image_url': 'product.image.url',
+                
+                    } 
+                },
+            ],
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/success.html',
+            cancel_url=YOUR_DOMAIN + '/cancel.html',
+        )
+    
+        return redirect(checkout_session.url, code=303)
+
