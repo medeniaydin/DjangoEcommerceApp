@@ -315,6 +315,8 @@ from django.conf import settings
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
 
+#not completed
+'''
 YOUR_DOMAIN = 'http://127.0.0.1:8000'
 class CrateCheckoutSessionView():
     def post(self, *args,**kwargs):
@@ -339,4 +341,5 @@ class CrateCheckoutSessionView():
         )
     
         return redirect(checkout_session.url, code=303)
-
+        
+'''
